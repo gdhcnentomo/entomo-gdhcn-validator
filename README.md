@@ -45,9 +45,9 @@ Ensure you configure the following properties in your `application.properties` o
 
 ```properties
 # Spring JPA Configuration
-spring.datasource.url=your database url
-spring.datasource.username=your database user name
-spring.datasource.password=your database password
+spring.datasource.url=your-database-url
+spring.datasource.username=your-database-username
+spring.datasource.password=yourdatabase-password
 
 # AWS S3 configuration
 aws.bucket.s3.bucket.name=your-bucket-name
@@ -102,7 +102,7 @@ For any questions or support, please reach out to <a href="">gdhcn@entomo.co</a>
 
 ### Notes:
 ```properties
-- Replace placeholders such as `your-bucket-name`, `your-access-key`, `your-secret-key`, and `your-email@example.com` with actual values relevant to your setup.
+- Replace placeholders such as `your-database-url`,`your-database-usernmae`,`your-database-password`,`your-bucket-name`, `your-access-key`, `your-secret-key`, and `your-email@example.com` with actual values relevant to your setup.
 - Update the repository URL with the actual URL where the code is hosted.
 - Adjust any configuration or details based on your actual implementation and environment.
 ```
