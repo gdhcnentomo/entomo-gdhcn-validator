@@ -102,7 +102,7 @@ For any questions or support, please reach out to <a href="">gdhcn@entomo.co</a>
 
 ### Notes:
 ```properties
-- Replace placeholders such as `your-database-url`,`your-database-usernmae`,`your-database-password`,`your-bucket-name`, `your-access-key`, `your-secret-key`, and `your-email@example.com` with actual values relevant to your setup.
+- Replace placeholders such as `your-database-url`,`your-database-usernmae`,`your-database-password`,`your-bucket-name`, `your-access-key` and `your-secret-key` with actual values relevant to your setup.
 - Update the repository URL with the actual URL where the code is hosted.
 - Adjust any configuration or details based on your actual implementation and environment.
 ```
