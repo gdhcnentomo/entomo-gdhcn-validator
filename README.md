@@ -87,10 +87,12 @@ mvn spring-boot:run
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+You may obtain a copy of the License at https://www.apache.org/licenses/LICENSE-2.0
+
 
 ## Contact
-For any questions or support, please reach out to gdhcn@@entomo.co
+For any questions or support, please reach out to <a href="">gdhcn@entomo.co</a>
 
 
 ### Notes:
@@ -100,3 +102,6 @@ For any questions or support, please reach out to gdhcn@@entomo.co
 - Adjust any configuration or details based on your actual implementation and environment.
 ```
 
+## Acknowledgements
+
+- **HCERT Java Library:** This project utilizes the HCERT Java library for handling health certificate operations. Special thanks to the developers of HCERT Java for their valuable contribution.
