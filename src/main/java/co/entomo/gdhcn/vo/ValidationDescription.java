@@ -1,5 +1,8 @@
 package co.entomo.gdhcn.vo;
-
+/**
+ * @author Uday Matta
+ * @organization entomo Labs
+ */
 public enum ValidationDescription {
     DECODE_BASE45("Decoding Base45 QR", "Incorrect QR Payload. Unable to decode. Check if the payload is Base45 Encoded and has \"HC1:\" prefixed"),
     DEFLATE_COSE_BYTES("Decompressing (Deflate) decoded QR Payload", "Unable to deflate decoded payload. Ensure zlib compression is used"),

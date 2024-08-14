@@ -6,7 +6,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Builder;
 import lombok.Data;
-
+/**
+ * @author Uday Matta
+ * @organization entomo Labs
+ */
 @Data
 @Builder
 public class QrCodeRequest {

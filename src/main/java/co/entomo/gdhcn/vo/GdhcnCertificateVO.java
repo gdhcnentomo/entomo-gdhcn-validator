@@ -6,7 +6,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.Data;
-
+/**
+ * @author Uday Matta
+ * @organization entomo Labs
+ */
 @Data
 @JsonIgnoreProperties
 public class GdhcnCertificateVO {

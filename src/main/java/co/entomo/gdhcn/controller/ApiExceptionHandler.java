@@ -11,10 +11,22 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import co.entomo.gdhcn.exceptions.GdhcnValidationException;
 import co.entomo.gdhcn.vo.ApiFailureResponse;
-
+/**
+ *
+ *  @author Uday Matta
+ *  @organization entomo Labs
+ * Global exception handler for API-related exceptions.
+ * This class handles specific exceptions and formats them into appropriate API responses.
+ */
 @RestControllerAdvice
 public class ApiExceptionHandler {
 
+    /**
+     * Handles {@link GdhcnValidationException} thrown by the application.
+     *
+     * @param ex the exception to handle.
+     * @return a {@link ResponseEntity} containing an {@link ApiFailureResponse} with error details.
+     */
     @ExceptionHandler(GdhcnValidationException.class)
     public final ResponseEntity<ApiFailureResponse> handleApiException(GdhcnValidationException ex) {
         var errorDetails = ApiFailureResponse.builder()
@@ -24,7 +36,12 @@ public class ApiExceptionHandler {
                 .status(false).build();
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
+    /**
+     * Handles {@link MethodArgumentNotValidException} thrown during request validation.
+     *
+     * @param ex the exception to handle.
+     * @return a {@link ResponseEntity} containing an {@link ApiFailureResponse} with validation errors.
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public final ResponseEntity<ApiFailureResponse> handleValidationException(MethodArgumentNotValidException ex) {
         var errors = new HashMap<>();

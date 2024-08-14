@@ -2,7 +2,10 @@ package co.entomo.gdhcn.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-
+/**
+ * @author Uday Matta
+ * @organization entomo Labs
+ */
 @Data
 @AllArgsConstructor
 public class StepStatus {

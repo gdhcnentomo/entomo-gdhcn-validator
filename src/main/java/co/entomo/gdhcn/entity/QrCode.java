@@ -16,6 +16,10 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Data;
 
+/**
+ *  @author Uday Matta
+ *  @organization entomo Labs
+ */
 @Data
 @Entity
 @Table(name = "qr_code")

@@ -32,6 +32,10 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.util.*;
 
+/**
+ *  @author Uday Matta
+ *  @organization entomo Labs
+ */
 @Slf4j
 @Service
 public class GdhcnServiceImpl implements GdhcnService {
@@ -55,7 +59,7 @@ public class GdhcnServiceImpl implements GdhcnService {
     private ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Override
-    public String uploadIpsJson(QrCodeRequest qrCodeRequest) throws GdhcnValidationException {
+    public String vshcIssuance(QrCodeRequest qrCodeRequest) throws GdhcnValidationException {
         try {
             byte[] key = generateRandomSequence();
             String uuid = UUID.randomUUID().toString();
@@ -118,7 +122,7 @@ public class GdhcnServiceImpl implements GdhcnService {
     }
 
     @Override
-    public ValidateCwtResponse validateCwt(String qrCodeEncodedContent) {
+    public ValidateCwtResponse vshcValidation(String qrCodeEncodedContent) {
         Map<Integer, StepStatus> response = getDefaultStatus();
         SHLinkContent shLinkContent = null;
         int step = 0;

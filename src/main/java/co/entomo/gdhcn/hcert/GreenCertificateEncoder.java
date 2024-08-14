@@ -60,7 +60,6 @@ public class GreenCertificateEncoder {
     private byte[] getCOSEBytes(byte[] cborBytes) throws CoseException {
         Sign1Message msg = new Sign1Message();
         msg.addAttribute(HeaderKeys.Algorithm, AlgorithmID.ECDSA_256.AsCBOR(), Attribute.PROTECTED);
-        //msg.addAttribute(HeaderKeys.Algorithm, privateKey.get(KeyKeys.Algorithm), Attribute.PROTECTED);
         msg.addAttribute(HeaderKeys.KID, CBORObject.FromObject(kid), Attribute.PROTECTED);
         msg.SetContent(cborBytes);
         msg.sign(privateKey);

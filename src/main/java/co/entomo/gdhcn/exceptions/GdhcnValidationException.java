@@ -1,5 +1,9 @@
 package co.entomo.gdhcn.exceptions;
 
+/**
+ *  @author Uday Matta
+ *  @organization entomo Labs
+ */
 public class GdhcnValidationException extends Exception {
 
 	public GdhcnValidationException() {

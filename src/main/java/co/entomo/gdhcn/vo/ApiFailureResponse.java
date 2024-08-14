@@ -7,7 +7,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
+/**
+ * @author Uday Matta
+ * @organization entomo Labs
+ */
 @Getter
 @Setter
 @Builder

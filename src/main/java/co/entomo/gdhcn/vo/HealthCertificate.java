@@ -8,6 +8,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+/**
+ * @author Uday Matta
+ * @organization entomo Labs
+ */
 @Data
 @Builder
 @AllArgsConstructor

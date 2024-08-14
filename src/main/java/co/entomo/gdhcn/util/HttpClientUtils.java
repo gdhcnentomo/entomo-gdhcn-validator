@@ -19,6 +19,15 @@ import co.entomo.gdhcn.exceptions.GdhcnValidationException;
 import co.entomo.gdhcn.vo.GdhcnCertificateVO;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ *
+ *  @author Uday Matta
+ *  @organization entomo Labs
+ *
+ * Utility class for making HTTP requests to fetch GDHCN certificates.
+ * This class provides a method to retrieve a certificate from a GDHCN trust list
+ * based on the country code and Key Identifier (KID).
+ */
 @Slf4j
 @Component
 public class HttpClientUtils {
@@ -28,6 +37,14 @@ public class HttpClientUtils {
 	@Value("${gdhcn.dev.url}")
 	private String gdhcnDevUrl;
 	private ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+	/**
+	 * Fetches a GDHCN certificate from the trust list for a specific country and KID.
+	 *
+	 * @param countryCode the ISO 3166-1 alpha-2 country code to look up the trust list.
+	 * @param kid the Key Identifier (KID) to search within the trust list.
+	 * @return a {@link GdhcnCertificateVO} representing the certificate if found, or {@code null} if not found.
+	 * @throws GdhcnValidationException if there is an issue retrieving the certificate or if the country code is not found.
+	 */
 	public GdhcnCertificateVO getGdhcnCertificate(String countryCode, String kid) throws GdhcnValidationException
 	{
 		log.info("Fetching url "+gdhcnDevUrl+"/trustList/DSC/"+countryCode);

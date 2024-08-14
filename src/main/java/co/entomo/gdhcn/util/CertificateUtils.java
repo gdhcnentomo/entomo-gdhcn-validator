@@ -19,10 +19,24 @@ import org.springframework.stereotype.Component;
 import co.entomo.gdhcn.exceptions.GdhcnValidationException;
 import lombok.extern.slf4j.Slf4j;
 import nl.minvws.encoding.Base45;
+/**
+ *  @author Uday Matta
+ *  @organization entomo Labs
+ * Utility class for handling cryptographic operations related to certificates.
+ * This class provides methods for extracting private keys, generating Key Identifiers (KID),
+ * and extracting public keys from certificate data.
+ */
 @Slf4j
 @Component
 public class CertificateUtils {
 
+	/**
+	 * Extracts a {@link PrivateKey} from the given PEM-formatted private key content.
+	 *
+	 * @param privateKeyContent the PEM-formatted private key as a {@code String}.
+	 * @param countryCode the country code associated with the private key (not currently used in the method).
+	 * @return the extracted {@link PrivateKey}, or {@code null} if an error occurs.
+	 */
 	public PrivateKey getPrivateKey(String privateKeyContent, String countryCode) 
 	{
 		try 
@@ -44,7 +58,14 @@ public class CertificateUtils {
 		}
 		return null;
 	}
-	
+	/**
+	 * Generates a Key Identifier (KID) by extracting the Subject Key Identifier (SKI)
+	 * extension from the given public key content.
+	 *
+	 * @param publicKeyContent the Base64-encoded public key as a {@code String}.
+	 * @return a byte array representing the truncated KID (first 8 bytes of the SHA-256 hash).
+	 * @throws GdhcnValidationException if the KID cannot be generated.
+	 */
 	public byte[] getKid(String publicKeyContent) throws GdhcnValidationException{
         try {
             //byte[] certBytes = publicKeyContent.getBytes(StandardCharsets.UTF_8);
@@ -71,9 +92,10 @@ public class CertificateUtils {
         throw new GdhcnValidationException("Unable to find Kid from Public Key");
     }
 	/**
-	 * 
-	 * @param publicKeyContent without header
-	 * @return
+	 * Extracts a {@link PublicKey} from the given Base64-encoded public key content.
+	 *
+	 * @param publicKeyContent the Base64-encoded public key content as a {@code String}.
+	 * @return the extracted {@link PublicKey}, or {@code null} if an error occurs.
 	 */
 	public PublicKey getPublicKey(String publicKeyContent) 
 	{
