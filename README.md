@@ -44,6 +44,11 @@ The **entomo GDHCN Validator** is a microservice designed for validating GDHCN (
 Ensure you configure the following properties in your `application.properties` or `application.yml`:
 
 ```properties
+# Spring JPA Configuration
+spring.datasource.url=your database url
+spring.datasource.username=your database user name
+spring.datasource.password=your database password
+
 # AWS S3 configuration
 aws.bucket.s3.bucket.name=your-bucket-name
 aws.bucket.access.key=your-access-key
