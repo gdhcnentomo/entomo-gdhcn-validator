@@ -61,7 +61,7 @@ To build and run the application, follow these steps:
 ### 1. Clone the repository:
 
 ```properties
-git clone https://github.com/your-repo/entomo-gdhcn-validator.git
+git clone https://github.com/gdhcnentomo/entomo-gdhcn-validator.git
 cd entomo-gdhcn-validator
 ```
 ### 2. Build the project using Maven:
