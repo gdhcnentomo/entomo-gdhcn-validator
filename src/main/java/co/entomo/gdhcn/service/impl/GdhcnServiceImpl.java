@@ -6,6 +6,7 @@ import co.entomo.gdhcn.exceptions.GdhcnValidationException;
 import co.entomo.gdhcn.hcert.GreenCertificateDecoder;
 import co.entomo.gdhcn.hcert.GreenCertificateEncoder;
 import co.entomo.gdhcn.repository.QrCodeRepository;
+import co.entomo.gdhcn.service.GdhcnFileSystem;
 import co.entomo.gdhcn.service.GdhcnService;
 import co.entomo.gdhcn.util.AmazonClientUtil;
 import co.entomo.gdhcn.util.CertificateUtils;
@@ -23,9 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -42,10 +41,12 @@ public class GdhcnServiceImpl implements GdhcnService {
 
     @Value("${gdhcn.baseUrl}")
     private String baseUrl;
-    @Value("${aws.bucket.s3.bucket.name}")
-    private String bucketName;
-    @Value("${aws.bucket.s3.json.folder}")
-    private String jsonFolder;
+    @Value("${tng.country}")
+    private String countryCode;
+    @Value("${tng.dsc.privateKey}")
+    private String dscKeyPath;
+    @Value("${tng.dsc.privateKey.kid}")
+    private String kidId;
     @Autowired
     private QrCodeRepository qrCodeRepository;
     @Autowired
@@ -54,8 +55,9 @@ public class GdhcnServiceImpl implements GdhcnService {
     private HttpClientUtils httpClientUtils;
     @Autowired
     private ModelMapper modelMapper;
+
     @Autowired
-    private AmazonClientUtil amazonClientUtil;
+    private GdhcnFileSystem gdhcnFileSystem;
     private ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Override
@@ -64,7 +66,7 @@ public class GdhcnServiceImpl implements GdhcnService {
             byte[] key = generateRandomSequence();
             String uuid = UUID.randomUUID().toString();
             String fileName = uuid + ".json";
-            String jsonUrl = bucketName + File.separator + jsonFolder + File.separator + fileName;
+            String jsonUrl = gdhcnFileSystem.getPath(fileName);
             String shUrl = null;
             if (StringUtils.hasLength(qrCodeRequest.getPassCode())) {
                 shUrl = baseUrl + "/v2/manifests/" + uuid;
@@ -85,7 +87,7 @@ public class GdhcnServiceImpl implements GdhcnService {
             qrCode.setKey(Base64.getUrlEncoder().encodeToString(key));
             qrCode.setFlag(shLinkPayload.getFlag());
             qrCodeRepository.save(qrCode);
-            amazonClientUtil.uploadFileToBucket(fileName, qrCodeRequest.getJsonContent(), jsonFolder);
+            gdhcnFileSystem.uploadJson(fileName, qrCodeRequest.getJsonContent());
             String shLinkConsent = "shlink://" + Base64.getEncoder().encodeToString(OBJECT_MAPPER.writeValueAsString(shLinkPayload).getBytes(StandardCharsets.UTF_8));
 
             long expiredInMillies = new Date(Long.MAX_VALUE).getTime() / 1000L;
@@ -99,15 +101,15 @@ public class GdhcnServiceImpl implements GdhcnService {
             list.add(link);
             CertificatePayload payload = CertificatePayload.builder()
                     .iat(System.currentTimeMillis())
-                    .iss(qrCodeRequest.getCountryCode())
+                    .iss(countryCode)
                     .healthCertificate(hCert)
                     .exp(expiredInMillies)
                     .build();
 
             String payLoadJson = OBJECT_MAPPER.writeValueAsString(payload);
-            PrivateKey privateKey = certificateUtils.getPrivateKey(qrCodeRequest.getPrivateKeyContent(), qrCodeRequest.getPrivateKeyContent());
+            PrivateKey privateKey = certificateUtils.getPrivateKey(getPrivateDSCKeyContent(), countryCode);
             OneKey cborPrivateKey = new OneKey(null, privateKey);
-            String encoded = new GreenCertificateEncoder(cborPrivateKey, qrCodeRequest.getKid()).encode(payLoadJson);
+            String encoded = new GreenCertificateEncoder(cborPrivateKey, kidId).encode(payLoadJson);
             return encoded;
         } catch (JsonProcessingException e) {
             e.printStackTrace();
@@ -233,7 +235,7 @@ public class GdhcnServiceImpl implements GdhcnService {
             QrCode qrCode = qrCodeRepository.findById(jsonId).get();
             if (qrCode != null) {
                 String fileName = jsonId + ".json";
-                InputStream is = amazonClientUtil.getFileInputStream(fileName, jsonFolder);
+                InputStream is = gdhcnFileSystem.downloadJson(fileName);
                 byte[] rawContent = is.readAllBytes();
                 String jsonContent = new String(rawContent);
                 log.info("Downloaded json: " + jsonContent);
@@ -251,7 +253,7 @@ public class GdhcnServiceImpl implements GdhcnService {
             QrCode qrCode = qrCodeRepository.findById(jsonId).get();
             if (qrCode != null) {
                 String fileName = jsonId + ".json";
-                InputStream is = amazonClientUtil.getFileInputStream(fileName, jsonFolder);
+                InputStream is = gdhcnFileSystem.downloadJson(fileName);
                 byte[] rawContent = is.readAllBytes();
                 String jsonContent = new String(rawContent);
                 log.info("Downloaded json: " + jsonContent);
@@ -260,5 +262,19 @@ public class GdhcnServiceImpl implements GdhcnService {
             throw new RuntimeException(e);
         }
         return null;
+    }
+
+    private String getPrivateDSCKeyContent() throws IOException {
+        StringBuilder content = new StringBuilder();
+        try (FileInputStream fis = new FileInputStream(dscKeyPath);
+             InputStreamReader isr = new InputStreamReader(fis);
+             BufferedReader reader = new BufferedReader(isr)) {
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                content.append(line).append(System.lineSeparator());
+            }
+        }
+        return content.toString();
     }
 }

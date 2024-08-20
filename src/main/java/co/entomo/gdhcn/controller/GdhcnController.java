@@ -4,15 +4,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import co.entomo.gdhcn.vo.ManifestRequest;
-import co.entomo.gdhcn.vo.ValidateCwtResponse;
+import co.entomo.gdhcn.vo.*;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import co.entomo.gdhcn.exceptions.GdhcnValidationException;
 import co.entomo.gdhcn.service.GdhcnService;
-import co.entomo.gdhcn.vo.QrCodeRequest;
-import co.entomo.gdhcn.vo.StepStatus;
 import lombok.AllArgsConstructor;
 /**
  * @author Uday Matta
@@ -50,10 +48,9 @@ public class GdhcnController
 	 * @throws GdhcnValidationException if there is a validation error.
 	 */
 	@PostMapping(value = "/v2/vshcValidation", produces = {"application/fhir+json"})
-	public ResponseEntity<ValidateCwtResponse> vshcValidation(@RequestBody Map<String, String> body) throws GdhcnValidationException
+	public ResponseEntity<ValidateCwtResponse> vshcValidation(@Valid @RequestBody ValidateRequest body) throws GdhcnValidationException
 	{
-		String qrCodeContent = body.get("qrCodeContent").toString();
-		ValidateCwtResponse status = gdhcnService.vshcValidation(qrCodeContent);
+		ValidateCwtResponse status = gdhcnService.vshcValidation(body.getQrCodeContent());
 		return ResponseEntity.of(Optional.of(status));
 	}
 	/**
