@@ -44,6 +44,9 @@ The **entomo GDHCN Validator** is a microservice designed for validating Verifia
 Ensure you configure the following properties in your `application.properties` or `application.yml`:
 
 ```properties
+# Profile Configuration, for Local use 'fileSystem', for AWS use 'aws'
+spring.profiles.active = fileSystem
+
 # Spring JPA Configuration
 spring.datasource.url=your-database-url
 spring.datasource.username=your-database-username
