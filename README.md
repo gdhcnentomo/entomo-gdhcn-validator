@@ -57,6 +57,10 @@ aws.bucket.access.secret=your-secret-key
 # TLS configuration
 tng.tls.pem=path/to/your/certificate.pem
 tng.tls.key=path/to/your/private-key.pem
+tng.country = XA
+tng.dsc.privateKey =path/to/your/dsc-privaye-key
+tng.dsc.privateKey.kid =dsc kid id
+
 
 ```
 ## Build and Run
