@@ -2,7 +2,7 @@
 
 ## Overview
 
-The **entomo GDHCN Validator** is a microservice designed for validating GDHCN (Global Digital Health Certification Network) certificates. This application uses Spring Boot and various dependencies to perform certificate validation and related operations.
+The **entomo GDHCN Validator** is a microservice designed for validating Verifiable Smart Health Certificate (VSHC). This application uses Spring Boot and various dependencies to perform certificate validation and related operations.
 
 ## Features
 
