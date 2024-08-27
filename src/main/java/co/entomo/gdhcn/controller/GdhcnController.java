@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import co.entomo.gdhcn.exceptions.GdhcnIPSAlreadyAccessedException;
 import co.entomo.gdhcn.vo.*;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -56,30 +57,29 @@ public class GdhcnController
 	/**
 	 * Endpoint for retrieving IPS JSON data.
 	 *
-	 * @param jsonId the ID of the JSON data to retrieve.
+	 * @param manifestId the ID of the JSON data to retrieve.
 	 * @return a {@link ResponseEntity} containing the JSON content.
 	 */
 	@CrossOrigin(origins = "*", allowedHeaders = "*")
-	@GetMapping(value = "/v2/ips-json/{jsonId}", produces = {"application/json"})
-	public ResponseEntity<String> getIpsJson(@PathVariable("jsonId") String jsonId)
-	{
-		String jsonContent = gdhcnService.downloadJson(jsonId);
+	@GetMapping(value = "/v2/ips-json/{manifestId}", produces = {"application/json"})
+	public ResponseEntity<String> getIpsJson(@PathVariable("manifestId") String manifestId) throws GdhcnIPSAlreadyAccessedException {
+		String jsonContent = gdhcnService.downloadJson(manifestId);
 		return ResponseEntity.of(Optional.of(jsonContent));
 	}
 	/**
 	 * Endpoint for getting manifest data.
 	 *
 	 * @param manifestRequest the request body containing the manifest request data.
-	 * @param jsonId          the ID of the JSON data for the manifest.
+	 * @param manifestId          the ID of the JSON data for the manifest.
 	 * @return a {@link ResponseEntity} containing the manifest data in JSON format.
 	 * @throws GdhcnValidationException if there is a validation error.
 	 */
 	@CrossOrigin(origins = "*", allowedHeaders = "*")
-	@PostMapping(value = "/v2/manifests/{jsonId}", produces = {"application/json"})
-	public ResponseEntity<Map<String, List<Map<String,String>>>> getManifest(@RequestBody ManifestRequest manifestRequest, @PathVariable("jsonId") String jsonId) throws GdhcnValidationException {
+	@PostMapping(value = "/v2/manifests/{manifestId}", produces = {"application/json"})
+	public ResponseEntity<Map<String, List<Map<String,String>>>> getManifest(@RequestBody ManifestRequest manifestRequest, @PathVariable("manifestId") String manifestId) throws GdhcnValidationException {
 		Map<String, List<Map<String, String>>> response = null;
 		try {
-			response = gdhcnService.getManifest(manifestRequest, jsonId);
+			response = gdhcnService.getManifest(manifestRequest, manifestId);
 		} catch (GdhcnValidationException e) {
 			throw e;
 		}

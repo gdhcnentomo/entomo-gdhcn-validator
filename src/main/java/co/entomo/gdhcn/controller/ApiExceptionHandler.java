@@ -2,6 +2,8 @@ package co.entomo.gdhcn.controller;
 
 import java.util.HashMap;
 
+import co.entomo.gdhcn.exceptions.GdhcnIPSAlreadyAccessedException;
+import co.entomo.gdhcn.exceptions.GdhcnQRCodeExpiredException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -36,6 +38,26 @@ public class ApiExceptionHandler {
                 .status(false).build();
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+    @ExceptionHandler(GdhcnQRCodeExpiredException.class)
+    public final ResponseEntity<ApiFailureResponse> handleApiQrExpiredException(GdhcnQRCodeExpiredException ex) {
+        var errorDetails = ApiFailureResponse.builder()
+                .code(HttpStatus.UNAUTHORIZED.value())
+                .error(ex.getMessage())
+                .errorMessage("Unable to process request")
+                .status(false).build();
+        return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(GdhcnIPSAlreadyAccessedException.class)
+    public final ResponseEntity<ApiFailureResponse> handleApiIpsExpiredException(GdhcnIPSAlreadyAccessedException ex) {
+        var errorDetails = ApiFailureResponse.builder()
+                .code(HttpStatus.NOT_FOUND.value())
+                .error(ex.getMessage())
+                .errorMessage("Unable to process request")
+                .status(false).build();
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
+
     /**
      * Handles {@link MethodArgumentNotValidException} thrown during request validation.
      *

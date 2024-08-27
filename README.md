@@ -44,6 +44,8 @@ The **entomo GDHCN Validator** is a microservice designed for validating Verifia
 Ensure you configure the following properties in your `application.properties` or `application.yml`:
 
 ```properties
+# IPS SHLink Expiry time
+ips.shlink.expiry = your-no-of-minutes
 # Profile Configuration, for Local use 'fileSystem', for AWS use 'aws'
 spring.profiles.active = fileSystem
 

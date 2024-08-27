@@ -4,6 +4,7 @@ package co.entomo.gdhcn.service;
 import java.util.List;
 import java.util.Map;
 
+import co.entomo.gdhcn.exceptions.GdhcnIPSAlreadyAccessedException;
 import co.entomo.gdhcn.exceptions.GdhcnValidationException;
 import co.entomo.gdhcn.vo.ManifestRequest;
 import co.entomo.gdhcn.vo.QrCodeRequest;
@@ -38,19 +39,19 @@ public interface GdhcnService {
 	 * Retrieves a manifest based on the provided {@link ManifestRequest} and JSON identifier.
 	 *
 	 * @param manifestRequest the request object containing details required to fetch the manifest.
-	 * @param jsonId the identifier for the specific JSON data or manifest being requested.
+	 * @param manifestId the identifier for the specific JSON data or manifest being requested.
 	 * @return a {@code Map<String, List<Map<String, String>>>} representing the manifest data.
 	 * @throws GdhcnValidationException if validation errors occur during the process of fetching the manifest.
 	 */
-	Map<String, List<Map<String,String>>> getManifest(ManifestRequest manifestRequest, String jsonId) throws GdhcnValidationException;
+	Map<String, List<Map<String,String>>> getManifest(ManifestRequest manifestRequest, String manifestId) throws GdhcnValidationException;
 
 	/**
 	 * Downloads JSON Web Encryption (JWE) formatted JSON data based on the provided JSON identifier.
 	 *
-	 * @param jsonId the identifier for the JWE JSON data to be downloaded.
+	 * @param manifestId the identifier for the JWE JSON data to be downloaded.
 	 * @return a {@code String} representing the JWE JSON data.
 	 */
-	String downloadJWEJson(String jsonId);
+	String downloadJWEJson(String manifestId);
 
 	/**
 	 * Downloads standard JSON data (not JWE) based on the provided JSON identifier.
@@ -58,5 +59,5 @@ public interface GdhcnService {
 	 * @param jsonId the identifier for the JSON data to be downloaded.
 	 * @return a {@code String} representing the JSON data.
 	 */
-	String downloadJson(String jsonId);
+	String downloadJson(String jsonId) throws GdhcnIPSAlreadyAccessedException;
 }

@@ -2,6 +2,8 @@ package co.entomo.gdhcn.service.impl;
 
 import COSE.*;
 import co.entomo.gdhcn.entity.QrCode;
+import co.entomo.gdhcn.exceptions.GdhcnIPSAlreadyAccessedException;
+import co.entomo.gdhcn.exceptions.GdhcnQRCodeExpiredException;
 import co.entomo.gdhcn.exceptions.GdhcnValidationException;
 import co.entomo.gdhcn.hcert.GreenCertificateDecoder;
 import co.entomo.gdhcn.hcert.GreenCertificateEncoder;
@@ -29,6 +31,10 @@ import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 /**
@@ -45,6 +51,8 @@ public class GdhcnServiceImpl implements GdhcnService {
     private String countryCode;
     @Value("${tng.dsc.privateKey}")
     private String dscKeyPath;
+    @Value("${ips.shlink.expiry}")
+    private long ipsShLinkExpiry;
     @Value("${tng.dsc.privateKey.kid}")
     private String kidId;
     @Autowired
@@ -65,13 +73,14 @@ public class GdhcnServiceImpl implements GdhcnService {
         try {
             byte[] key = generateRandomSequence();
             String uuid = UUID.randomUUID().toString();
+            String manifestId = Base64.getUrlEncoder().encodeToString(generateRandomSequence());
             String fileName = uuid + ".json";
             String jsonUrl = gdhcnFileSystem.getPath(fileName);
             String shUrl = null;
             if (StringUtils.hasLength(qrCodeRequest.getPassCode())) {
-                shUrl = baseUrl + "/v2/manifests/" + uuid;
+                shUrl = baseUrl + "/v2/manifests/" + manifestId;
             } else {
-                shUrl = baseUrl + "/v2/ips-json/" + uuid;
+                shUrl = baseUrl + "/v2/ips-json/" + manifestId;
             }
             SHLinkContent shLinkPayload = SHLinkContent.builder()
                     .url(shUrl)
@@ -83,6 +92,7 @@ public class GdhcnServiceImpl implements GdhcnService {
 
             QrCode qrCode = modelMapper.map(qrCodeRequest, QrCode.class);
             qrCode.setJsonUrl(jsonUrl);
+            qrCode.setManifestId(manifestId);
             qrCode.setId(uuid);
             qrCode.setKey(Base64.getUrlEncoder().encodeToString(key));
             qrCode.setFlag(shLinkPayload.getFlag());
@@ -218,11 +228,24 @@ public class GdhcnServiceImpl implements GdhcnService {
     }
 
     @Override
-    public Map<String, List<Map<String, String>>> getManifest(ManifestRequest manifestRequest, String jsonId) throws GdhcnValidationException {
+    public Map<String, List<Map<String, String>>> getManifest(ManifestRequest manifestRequest, String manifestId) throws GdhcnValidationException {
         Map<String, List<Map<String, String>>> response = new HashMap<String, List<Map<String, String>>>();
-        QrCode qrCode = qrCodeRepository.findByIdAndPassCode(jsonId, manifestRequest.getPasscode()).get();
-        if (qrCode != null) {
-            String url = baseUrl + "/v2/ips-json/" + jsonId;
+        QrCode qrCode = qrCodeRepository.findByManifestId(manifestId).get();
+        if (qrCode != null)
+        {
+            if(!qrCode.getPassCode().contentEquals(manifestRequest.getPasscode())){
+                throw new GdhcnValidationException("");
+            }
+            if(qrCode.getManifestCreatedAt() !=null){
+                if(qrCode.getManifestCreatedAt().toInstant().plus(ipsShLinkExpiry, ChronoUnit.MINUTES).isBefore(Instant.now())) {
+                    throw new GdhcnQRCodeExpiredException("Expired");
+                }
+            }else{
+                //First time manifest access
+                qrCode.setManifestCreatedAt(Date.from(Instant.now()));
+                qrCodeRepository.save(qrCode);
+            }
+            String url = baseUrl + "/v2/ips-json/" + manifestId;
             response.put("files", List.of(Map.of("contentType", "application/fhir+json", "location", url)));
             return response;
         }
@@ -230,15 +253,21 @@ public class GdhcnServiceImpl implements GdhcnService {
     }
 
     @Override
-    public String downloadJson(String jsonId) {
+    public String downloadJson(String manifestId) throws GdhcnIPSAlreadyAccessedException {
         try {
-            QrCode qrCode = qrCodeRepository.findById(jsonId).get();
-            if (qrCode != null) {
-                String fileName = jsonId + ".json";
+            QrCode qrCode = qrCodeRepository.findByManifestId(manifestId).get();
+            if (qrCode != null)
+            {
+                if(qrCode.isAccessed()){
+                    throw new GdhcnIPSAlreadyAccessedException("Expired");
+                }
+                String fileName = qrCode.getId() + ".json";
                 InputStream is = gdhcnFileSystem.downloadJson(fileName);
                 byte[] rawContent = is.readAllBytes();
                 String jsonContent = new String(rawContent);
                 log.info("Downloaded json: " + jsonContent);
+                qrCode.setAccessed(true);
+                qrCodeRepository.save(qrCode);
                 return jsonContent;
             }
         } catch (IOException e) {
