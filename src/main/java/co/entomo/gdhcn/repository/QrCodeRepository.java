@@ -24,7 +24,7 @@ public interface QrCodeRepository extends JpaRepository<QrCode, String> {
      */
     Optional<QrCode> findByIdAndPassCode(String id, String passCode);
 
-    Optional<QrCode> findByManifestIdAndPassCodeAndIsAccessed(String manifestId, String passCode, Boolean accessed);
+    //Optional<QrCode> findByManifestIdAndPassCodeAndIsAccessed(String manifestId, String passCode, Boolean accessed);
 
     Optional<QrCode> findByManifestId(String manifestId);
 }

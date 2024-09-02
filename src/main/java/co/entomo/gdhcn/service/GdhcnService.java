@@ -59,5 +59,5 @@ public interface GdhcnService {
 	 * @param jsonId the identifier for the JSON data to be downloaded.
 	 * @return a {@code String} representing the JSON data.
 	 */
-	String downloadJson(String jsonId) throws GdhcnIPSAlreadyAccessedException;
+	String downloadJson(String jsonId) throws GdhcnValidationException;
 }

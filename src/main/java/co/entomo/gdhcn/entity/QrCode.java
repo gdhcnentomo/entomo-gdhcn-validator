@@ -45,12 +45,15 @@ public class QrCode {
 	private String flag;
 	private String key;
 
+	/*
 	@Column(columnDefinition = "boolean default false")
 	private boolean isAccessed;
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "manifest_created_at")
 	private Date manifestCreatedAt;
+	 */
+
 	@Column(nullable = false)
 	private String manifestId;
 }
