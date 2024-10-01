@@ -50,7 +50,7 @@ class EntomoGdhcnMsApplicationTests {
 	void testRest() throws IOException, InterruptedException, GdhcnValidationException 
 	{
 		GdhcnCertificateVO vo = httpClientUtils.getGdhcnCertificate("XM","qb4L0atiX/4=");
-		PublicKey pk = certificateUtils.getPublicKey(vo.getRawData());
+		PublicKey pk = certificateUtils.getPublicKey(vo.getCertificate());
 		System.out.println(pk.getFormat());
        
 	}

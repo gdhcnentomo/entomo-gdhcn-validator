@@ -165,7 +165,7 @@ public class GdhcnServiceImpl implements GdhcnService {
                 if (gdhcnCertificateVO == null)
                     throw new RuntimeException("Unable to Fetch GDHCN Certificate");
                 updateStatus(response, ++step, ValidationStatus.SUCCESS);
-                PublicKey publicKey = certificateUtils.getPublicKey(gdhcnCertificateVO.getRawData());
+                PublicKey publicKey = certificateUtils.getPublicKey(gdhcnCertificateVO.getCertificate());
                 OneKey oneKey = new OneKey(publicKey, null);
                 GreenCertificateDecoder decoder = new GreenCertificateDecoder(oneKey);
                 boolean status = decoder.validate(msg);

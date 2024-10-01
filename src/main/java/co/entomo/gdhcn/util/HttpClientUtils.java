@@ -47,10 +47,10 @@ public class HttpClientUtils {
 	 */
 	public GdhcnCertificateVO getGdhcnCertificate(String countryCode, String kid) throws GdhcnValidationException
 	{
-		log.info("Fetching url "+gdhcnDevUrl+"/trustList/DSC/"+countryCode);
+		log.info("Fetching url "+gdhcnDevUrl+"/trustList/certificate?group=DSC&country="+countryCode);
 		try {
 			HttpRequest request = HttpRequest.newBuilder()
-			        .uri(URI.create(gdhcnDevUrl+"/trustList/DSC/"+countryCode))
+			        .uri(URI.create(gdhcnDevUrl+"/trustList/certificate?group=DSC&country="+countryCode))
 			        .GET()
 			        .build();
 
